@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Login Demo - Playwright</title>
+    <style>
+      :root {
+        color-scheme: light;
+        font-family: Arial, Helvetica, sans-serif;
+        background: #f4f6f8;
+        color: #17202a;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+      }
+
+      main {
+        width: min(92vw, 420px);
+        background: #ffffff;
+        border: 1px solid #d9e0e7;
+        border-radius: 8px;
+        box-shadow: 0 16px 38px rgb(33 37 41 / 12%);
+        padding: 28px;
+      }
+
+      h1 {
+        margin: 0 0 6px;
+        font-size: 28px;
+      }
+
+      .hint {
+        margin: 0 0 24px;
+        color: #536471;
+        line-height: 1.4;
+      }
+
+      label {
+        display: block;
+        margin: 16px 0 6px;
+        font-weight: 700;
+      }
+
+      input {
+        box-sizing: border-box;
+        width: 100%;
+        min-height: 44px;
+        border: 1px solid #aab7c4;
+        border-radius: 6px;
+        padding: 10px 12px;
+        font-size: 16px;
+      }
+
+      button {
+        width: 100%;
+        min-height: 44px;
+        margin-top: 22px;
+        border: 0;
+        border-radius: 6px;
+        background: #1264a3;
+        color: #ffffff;
+        font-size: 16px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background: #0f578e;
+      }
+
+      [role='alert'] {
+        margin-top: 16px;
+        color: #b42318;
+        font-weight: 700;
+      }
+
+      .dashboard {
+        display: none;
+      }
+
+      .session-box {
+        margin-top: 16px;
+        padding: 14px;
+        background: #eef7f1;
+        border: 1px solid #b7dfc2;
+        border-radius: 6px;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section id="login-panel" aria-labelledby="title">
+        <h1 id="title">Ingreso al sistema</h1>
+        <p class="hint">Usuario de practica: admin@demo.com / Demo123!</p>
+
+        <form id="login-form">
+          <label for="email">Correo</label>
+          <input id="email" name="email" type="email" autocomplete="username" required />
+
+          <label for="password">Contrasena</label>
+          <input id="password" name="password" type="password" autocomplete="current-password" required />
+
+          <button type="submit">Ingresar</button>
+          <p id="message" role="alert" aria-live="polite"></p>
+        </form>
+      </section>
+
+      <section id="dashboard" class="dashboard" aria-labelledby="welcome-title">
+        <h1 id="welcome-title">Bienvenido</h1>
+        <div class="session-box">
+          <strong>Sesion iniciada correctamente.</strong>
+          <p id="user-email" data-testid="user-email"></p>
+        </div>
+        <button id="logout" type="button">Cerrar sesion</button>
+      </section>
+    </main>
+
+    <script>
+      const validUser = {
+        email: 'admin@demo.com',
+        password: 'Demo123!'
+      };
+
+      const loginPanel = document.querySelector('#login-panel');
+      const dashboard = document.querySelector('#dashboard');
+      const message = document.querySelector('#message');
+      const userEmail = document.querySelector('#user-email');
+
+      document.querySelector('#login-form').addEventListener('submit', (event) => {
+        event.preventDefault();
+
+        const form = new FormData(event.currentTarget);
+        const email = String(form.get('email')).trim();
+        const password = String(form.get('password'));
+
+        if (email === validUser.email && password === validUser.password) {
+          message.textContent = '';
+          userEmail.textContent = email;
+          loginPanel.style.display = 'none';
+          dashboard.style.display = 'block';
+          return;
+        }
+
+        message.textContent = 'Correo o contrasena incorrectos.';
+      });
+
+      document.querySelector('#logout').addEventListener('click', () => {
+        document.querySelector('#login-form').reset();
+        dashboard.style.display = 'none';
+        loginPanel.style.display = 'block';
+      });
+    </script>
+  </body>
+</html>
