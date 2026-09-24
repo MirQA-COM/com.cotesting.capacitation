@@ -266,3 +266,108 @@ Subir cambios:
 
 ```bash
 git add .
+
+## Practica: hacer fallar un PR hacia master
+
+Esta practica sirve para demostrar que el Quality Gate bloquea la integracion cuando falla una prueba E2E.
+
+### 1. Crear una rama nueva
+
+Desde la rama principal:
+
+```bash
+git checkout master
+git pull origin master
+git checkout -b feature/demo-falla-login
+```
+
+### 2. Cambiar la pagina para romper el test
+
+Abrir el archivo:
+
+```text
+apps/web/src/index.html
+```
+
+Buscar el boton:
+
+```html
+<button type="submit">Ingresar</button>
+```
+
+Cambiarlo por:
+
+```html
+<button type="submit">Entrar</button>
+```
+
+Este cambio rompe intencionalmente la prueba E2E porque Playwright esta buscando un boton con el texto `Ingresar`.
+
+### 3. Subir el cambio
+
+```bash
+git add .
+git commit -m "Change login button text"
+git push -u origin feature/demo-falla-login
+```
+
+### 4. Crear Pull Request hacia master
+
+En GitHub:
+
+1. Ir al repositorio.
+2. Crear un Pull Request desde `feature/demo-falla-login` hacia `master`.
+3. Esperar a que corra GitHub Actions.
+
+### 5. Resultado esperado
+
+El pipeline debe comportarse asi:
+
+```text
+Stage 1 - Validar web      OK
+Stage 2 - Pruebas E2E      FAIL
+Stage 3 - Quality Gate     No corre o queda bloqueado
+Stage 4 - CD GitHub Pages  No aplica para el PR
+```
+
+El PR no debe dejarse integrar a `master` si tienes configurada la proteccion de rama con checks obligatorios.
+
+### 6. Ver el reporte del fallo
+
+En GitHub Actions:
+
+1. Entrar al workflow fallido.
+2. Abrir el job `Stage 2 - Pruebas E2E`.
+3. Revisar el error de Playwright.
+4. Descargar el artefacto `playwright-report`.
+
+El error esperado es que Playwright no encuentra:
+
+```js
+page.getByRole('button', { name: 'Ingresar' })
+```
+
+porque la pagina ahora muestra:
+
+```text
+Entrar
+```
+
+### 7. Corregir el PR
+
+Volver a dejar el boton como estaba:
+
+```html
+<button type="submit">Ingresar</button>
+```
+
+Subir el arreglo:
+
+```bash
+git add .
+git commit -m "Fix login button text"
+git push
+```
+
+GitHub Actions correra nuevamente. Cuando los stages pasen, el PR quedara habilitado para integrarse a `master`.
+
