@@ -2,8 +2,11 @@ name: CD - Login Demo
 
 on:
   push:
+    branches-ignore:
+      - master
+
+  pull_request:
     branches:
-      - main
       - master
 
   workflow_dispatch:
