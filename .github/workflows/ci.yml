@@ -128,7 +128,7 @@ jobs:
 
       - name: Evaluar Quality Gate
         run: |
-          COVERAGE=90
+          COVERAGE=79
           MIN_COVERAGE=80
 
           echo "======================================"
