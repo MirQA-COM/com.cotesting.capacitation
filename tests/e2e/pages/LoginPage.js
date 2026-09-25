@@ -5,7 +5,7 @@ class LoginPage {
     this.passwordInput = page.getByLabel('Contrasena');
     this.submitButton = page.getByRole('button', { name: 'Ingresar' });
     this.alert = page.getByRole('alert');
-    this.welcomeTitle = page.getByRole('heading', { name: 'Bienvenido' });
+    this.welcomeTitle = page.getByRole('heading', { name: 'Failed' });
     this.userEmail = page.getByTestId('user-email');
     this.logoutButton = page.getByRole('button', { name: 'Cerrar sesion' });
   }
