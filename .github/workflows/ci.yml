@@ -85,7 +85,7 @@ jobs:
           cat web.log
           exit 1
 
-      - name: Quality Gate - E2E Login
+      - name: E2E Login
         env:
           CI: true
           PLAYWRIGHT_BASE_URL: http://127.0.0.1:3000
@@ -125,10 +125,23 @@ jobs:
       - e2e
 
     steps:
-      - name: Confirmar Quality Gate
+
+      - name: Evaluar Quality Gate
         run: |
-          echo "========================================="
-          echo "QUALITY GATE OK"
-          echo "Validación web: APROBADA"
-          echo "Pruebas E2E: APROBADAS"
-          echo "========================================="
+          COVERAGE=65
+          MIN_COVERAGE=80
+
+          echo "======================================"
+          echo "         QUALITY GATE"
+          echo "======================================"
+          echo "Cobertura obtenida : ${COVERAGE}%"
+          echo "Cobertura requerida: ${MIN_COVERAGE}%"
+          echo "======================================"
+
+          if [ "$COVERAGE" -lt "$MIN_COVERAGE" ]; then
+            echo "QUALITY GATE FALLIDO"
+            echo "La cobertura está por debajo del mínimo permitido."
+            exit 1
+          fi
+
+          echo "QUALITY GATE APROBADO"
